@@ -1,0 +1,20 @@
+[package]
+org = "ravindu"
+name = "local_ai_agent"
+version = "0.1.0"
+distribution = "2201.11.0"
+
+[build-options]
+observabilityIncluded = true
+
+[[dependency]]
+org="wso2"
+name="ai.agent"
+version="0.7.8"
+repository="local"
+
+[[dependency]]
+org="ravindu"
+name="ollama"
+version="0.1.0"
+repository="local"
