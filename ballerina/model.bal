@@ -80,7 +80,6 @@ isolated class OllamaModel {
         return content ?: error agent:LlmInvalidResponseError("Empty response from the model");
     }
 
-
     public isolated function functionCall(agent:ChatMessage[] messages, agent:ChatCompletionFunctions[] functions, string? stop) returns string|agent:FunctionCall|agent:LlmError {
         // implement to call function call API of the new LLM
         // return the function call or the text content if the response is a chat response

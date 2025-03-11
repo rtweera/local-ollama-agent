@@ -15,14 +15,37 @@
 // under the License.
 
 import ballerina/io;
+
 import wso2/ai.agent;
 
 public function main() returns error? {
     OllamaModel ollamaModel = check new (connectionConfig = {});
-    agent:ChatMessage chatMessage = {
-        role: agent:USER,
-        content: "Hello"
-    };
-    string|agent:LlmError chat = ollamaModel.chatComplete([chatMessage], "stop");
-    io:println(chat);
+    string[] userMessages = [
+        "Explain quantum mechanics in simple terms.",
+        "What is entanglement?",
+        "How is it used in computing?",
+        "Who are key scientists?",
+        "What are real-world applications?"
+    ];
+    agent:ChatMessage chatMessage;
+    agent:ChatMessage[] chatMessages = [];
+    foreach int i in int:range(0, userMessages.length(), 1) {
+        chatMessage = {
+            role: agent:USER,
+            content: userMessages[i]
+        };
+        io:println(chatMessage);
+        chatMessages.push(chatMessage);
+        string|agent:LlmError assistantMessage = ollamaModel.chatComplete(chatMessages);
+        if assistantMessage is string {
+            chatMessage = {
+                role: agent:ASSISTANT,
+                content: assistantMessage
+            };
+            chatMessages.push(chatMessage);
+            io:println(chatMessage);
+        } else {
+            return assistantMessage;
+        }
+    }
 }

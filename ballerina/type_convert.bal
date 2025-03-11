@@ -29,8 +29,7 @@ public isolated function convertChatMessageToMessage(agent:ChatMessage chatMessa
     };
     match chatMessage {
         // Handle ChatUserMessage
-        // { role: agent:USER, content: var content }
-        var { role, content } if role == agent:USER => {
+        var {role, content} if role == agent:USER => {
             message.role = "user";
             if content is () || content.trim().length() == 0 {
                 return error ConversionError("Content is empty for user message");
@@ -38,8 +37,7 @@ public isolated function convertChatMessageToMessage(agent:ChatMessage chatMessa
             message.content = content;
         }
         // Handle ChatSystemMessage
-        // { role: agent:SYSTEM, content: var content }
-        var { role, content } if role == agent:SYSTEM => {
+        var {role, content} if role == agent:SYSTEM => {
             message.role = "system";
             if content is () || content.trim().length() == 0 {
                 return error ConversionError("Content is empty for a system message");
@@ -48,20 +46,21 @@ public isolated function convertChatMessageToMessage(agent:ChatMessage chatMessa
         }
 
         // Handle ChatFunctionMessage
-        var { role, content, name } if role == agent:FUNCTION => {
+        var {role, content, name} if role == agent:FUNCTION => {
             if name.trim().length() == 0 {
                 return error ConversionError("Function name is empty");
             }
             message.role = "assistant";
             message.content = content ?: "";
-            message.tool_calls = [{
-                "name": name,
-                "arguments": ""
-            }];
+            message.tool_calls = [
+                {
+                    "name": name,
+                    "arguments": ""
+                }
+            ];
         }
-                // Handle ChatAssistantMessage
-        // { role: agent:ASSISTANT, content: var content_, name: _, functionCall: var functionCall }
-        var { role, content, ...rest } if role == agent:ASSISTANT => {
+        // Handle ChatAssistantMessage
+        var {role, content, ...rest} if role == agent:ASSISTANT => {
             if content is () && !rest.hasKey("function_call") {
                 return error ConversionError("content and function call both empty for role: assistant");
             }
@@ -71,10 +70,12 @@ public isolated function convertChatMessageToMessage(agent:ChatMessage chatMessa
             }
             agent:FunctionCall? function_call = rest["function_call"];
             if function_call is agent:FunctionCall {
-                message.tool_calls = [{
-                    "name": function_call.name,
-                    "arguments": function_call.arguments
-                }];
+                message.tool_calls = [
+                    {
+                        "name": function_call.name,
+                        "arguments": function_call.arguments
+                    }
+                ];
             }
         }
         // Handle unexpected cases
