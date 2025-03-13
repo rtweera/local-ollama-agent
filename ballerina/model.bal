@@ -25,42 +25,6 @@ isolated class OllamaModel {
         self.llmClient = check new (connectionConfig);
     }
 
-    // agent:ChatMessage message[] => [{
-    //     role: agent:Role.USER | agent:Role.SYSTEM | agent:Role.ASSISTANT,
-    //     content: "Hello"
-    // }]
-
-    // ollama:Message message[] => [{
-    //     role: "user" | "system" | "assistant",
-    //     content: "Hello"
-    // }]
-
-    // function convertToOllamaMessages(agent:ChatMessage[] messages) returns ollama:Message[] {
-    //     ollama:Message[] ollamaMessages = [];
-    //     foreach var message in messages {
-    //         ollama:Message ollamaMessage = {
-    //             role: message.role.toString().toLowerAscii(),
-    //             content: message.content
-    //         };
-    //         ollamaMessages.push(ollamaMessage);
-    //     }
-    //     return ollamaMessages;
-    // }
-
-    // public isolated function chatComplete(agent:ChatMessage[] messages, string? stop = ()) returns string|agent:LlmError {
-    //     GenerateRequest payload = {
-    //         model: "llama3.2:3b",
-    //         prompt: "Hello how are you",
-    //         'stream: false
-    //     };
-    //     GenerateResponse|error response = self.llmClient->/generate.post(payload);
-    //     if response is error {
-    //         return error agent:LlmConnectionError("Error while connecting to the model", response);
-    //     }
-    //     string? content = response.response;
-    //     return content ?: error agent:LlmInvalidResponseError("Empty response from the model");
-    // }
-
     public isolated function chatComplete(agent:ChatMessage[] messages, string? stop = ()) returns string|agent:LlmError {
         Message[]|ConversionError convertedMessages = convertChatMessagesToMessages(messages);
         if convertedMessages is ConversionError {
